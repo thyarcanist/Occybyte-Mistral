@@ -1,0 +1,86 @@
+base_model: mistralai/Mistral-7B-v0.1
+model_type: MistralForCausalLM
+tokenizer_type: LlamaTokenizer
+is_mistral_derived_model: true
+
+load_in_8bit: false
+load_in_4bit: false
+strict: false
+
+datasets:
+  - path: mhenrichsen/alpaca_2k_test
+    type: alpaca
+  - path: path_to_your_main_dataset
+    # Assuming the main dataset: question/instruction format
+    type:
+      system_prompt: ""
+      field_system: system
+      format: "[INST] {instruction} [/INST]"
+      no_input_format: "[INST] {instruction} [/INST]"
+
+# Custom format for existenceTypes dataset
+  - path: path_to_your_existence_types_dataset
+    type:
+      system_prompt: ""
+      field_system: system
+      format: "[ID] {id} [TEXT] {text} [TYPE] {existenceType} [INFO] {informationType} [TRUTH] {truth} [NOTE] {note}"
+      no_input_format: "[ID] {id} [TEXT] {text} [TYPE] {existenceType} [INFO] {informationType} [TRUTH] {truth} [NOTE] {note}"
+
+# Custom format for characterDossier dataset
+  - path: path_to_your_character_dossier_dataset
+    type:
+      system_prompt: ""
+      field_system: system
+      format: "[ID] {id} [NAME] {person} [ALIAS] {alias_altSpellings} [GENDER] {gender} [TYPE] {existenceType} [SPECIES] {species} [MORTALITY] {mortality} [REALM] {realmAffiliation} [PARENTAGE] {parentage} [PRIMARY] {primaryAffiliation} [SECONDARY] {secondaryAffiliation} [TITLES] {titles} [RETINUE] {retinue} [NOTES] {additionalNotes}"
+      no_input_format: "[ID] {id} [NAME] {person} [ALIAS] {alias_altSpellings} [GENDER] {gender} [TYPE] {existenceType} [SPECIES] {species} [MORTALITY] {mortality} [REALM] {realmAffiliation} [PARENTAGE] {parentage} [PRIMARY] {primaryAffiliation} [SECONDARY] {secondaryAffiliation} [TITLES] {titles} [RETINUE] {retinue} [NOTES] {additionalNotes}"
+
+dataset_prepared_path:
+val_set_size: 0.05
+output_dir: ./out
+
+
+sequence_len: 8192
+sample_packing: true
+pad_to_sequence_len: true
+
+wandb_project:
+wandb_entity:
+wandb_watch:
+wandb_name:
+wandb_log_model:
+
+gradient_accumulation_steps: 4
+micro_batch_size: 2
+num_epochs: 4
+optimizer: adamw_bnb_8bit
+lr_scheduler: cosine
+learning_rate: 0.000005
+
+train_on_inputs: false
+group_by_length: false
+bf16: true
+fp16: false
+tf32: false
+
+gradient_checkpointing: true
+early_stopping_patience:
+resume_from_checkpoint:
+local_rank:
+logging_steps: 1
+xformers_attention:
+flash_attention: true
+
+warmup_steps: 10
+eval_steps: 0.05
+eval_table_size:
+eval_table_max_new_tokens: 128
+save_steps:
+debug:
+deepspeed:
+weight_decay: 0.0
+fsdp:
+fsdp_config:
+special_tokens:
+  bos_token: "<s>"
+  eos_token: "</s>"
+  unk_token: "<unk>"
